@@ -22,7 +22,7 @@ const NewTask = (props) => {
         },
         body: { text: taskText },
       },
-      createTask.bind()
+      createTask.bind(null, taskText)
     );
   };
 
