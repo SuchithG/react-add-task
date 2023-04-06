@@ -5,7 +5,7 @@ import useHttp from "../../hooks/use-http";
 const NewTask = (props) => {
   const { isLoading, error, sendRequest: sendTaskRequest } = useHttp();
 
-  const createTask = ( taskData ) => {
+  const createTask = (taskText, taskData) => {
     const generatedId = taskData.name; // firebase-specific => "name" contains generated id
     const createdTask = { id: generatedId, text: taskText };
 
@@ -13,42 +13,17 @@ const NewTask = (props) => {
   };
 
   const enterTaskHandler = async (taskText) => {
-    sendTaskRequest({
-      url: "https://react-http-6b4a6.firebaseio.com/tasks.json",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    sendTaskRequest(
+      {
+        url: "https://react-http-6b4a6.firebaseio.com/tasks.json",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: { text: taskText },
       },
-      body: { text: taskText },
-    }, createTask);
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(
-        "https://react-http-6b4a6.firebaseio.com/tasks.json",
-        {
-          method: "POST",
-          body: JSON.stringify({ text: taskText }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Request failed!");
-      }
-
-      const data = await response.json();
-
-      const generatedId = data.name; // firebase-specific => "name" contains generated id
-      const createdTask = { id: generatedId, text: taskText };
-
-      props.onAddTask(createdTask);
-    } catch (err) {
-      setError(err.message || "Something went wrong!");
-    }
-    setIsLoading(false);
+      createTask.bind()
+    );
   };
 
   return (
